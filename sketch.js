@@ -1,26 +1,33 @@
 const r = require("raylib");
-const verfication = require("./math");
+const calculation = require("./math");
 
-const windowHeight = 700;
 const windowWidth = 1000;
+const windowHeight = 700;
 
-let detectorX1 = 0;
-const detectorWidth1 = 50;
-let detectorSpeed1 = 3;
+let detector1_X = 0;
+const detector1_Width = 50;
+let detector1_Speed = 3;
 
-let detectorX2 = 950;
-const detectorWidth2 = 50;
-let detectorSpeed2 = -5;
+let detector2_X = 500;
+const detector2_Width = 50;
+let detector2_Speed = 5;
 
+let detectorY = 0;
+const detectorHeight = 50;
+let detectorSpeedY = 4;
 
-const practicalX1 = 400;
-const practicalWidth1 = 100;
+const partical1_X = 400;
+const partical1_width = 100;
 
-const practicalX2 = 700;
-const practicalWidth2 = 10;
+const partical2_X = 700;
+const partical2_Width = 10;
+
+const particalY = 300;
+const particalHeight = 30;
 
 let detectorColour1 = r.WHITE;
 let detectorColour2 = r.WHITE;
+let detectorColourY = r.WHITE;
 
 function running() {
     return !r.WindowShouldClose();
@@ -33,39 +40,43 @@ function setup() {
 }
 
 function update() {
-    detectorX1 = verfication.increment(detectorX1, detectorSpeed1);
-    detectorX2 = verfication.increment(detectorX2, detectorSpeed2);
+    detector1_X = calculation.increment(detector1_X, detector1_Speed);
+    detector2_X = calculation.increment(detector2_X, detector2_Speed);
+    detectorY = calculation.increment(detectorY, detectorSpeedY);
 
-    if (verfication.conditionBetween(detectorX1, detectorWidth1, 0, windowWidth / 2)) {
-        detectorSpeed1 = -detectorSpeed1;
+    if (calculation.conditionBetween(detector1_X, detector1_Width, 0, windowWidth / 2)) {
+        detector1_Speed = -detector1_Speed;
     }
-    if (verfication.conditionBetween(detectorX2, detectorWidth2, windowWidth / 2, windowWidth)) {
-        detectorSpeed2 = -detectorSpeed2;
+    if (calculation.conditionBetween(detector2_X, detector2_Width, windowWidth / 2, windowWidth)) {
+        detector2_Speed = -detector2_Speed;
 
     }
+    if (calculation.conditionBetween(detectorY, detectorHeight, 0, windowHeight)) {
+        detectorSpeedY = -detectorSpeedY;
+    }
 
-    overlape1 = verfication.overlap(detectorX1, detectorWidth1, practicalX1, practicalWidth1) || verfication.overlap(detectorX1, detectorWidth1, practicalX2, practicalWidth2);
-    overlape2 = verfication.overlap(detectorX2, detectorWidth2, practicalX1, practicalWidth1) || verfication.overlap(detectorX2, detectorWidth2, practicalX2, practicalWidth2)
-
-    const overlapping1 = overlape1;
-    const overlapping2 = overlape2;
+    const overlapping1 = calculation.overlap(detector1_X, detector1_Width, partical1_X, partical1_width) || calculation.overlap(detector1_X, detector1_Width, partical2_X, partical2_Width);;
+    const overlapping2 = calculation.overlap(detector2_X, detector2_Width, partical1_X, partical1_width) || calculation.overlap(detector2_X, detector2_Width, partical2_X, partical2_Width);;
+    const overlappingY = calculation.overlap(detectorY, detectorHeight, particalY, particalHeight);;
 
     detectorColour1 = overlapping1 ? r.RED : r.WHITE;
-    detectorColour2 = overlapping2 ? r.RED : r.WHITE
+    detectorColour2 = overlapping2 ? r.RED : r.WHITE;
+    detectorColourY = overlappingY ? r.RED : r.WHITE;
 }
 
 function draw() {
-    const detectorY = 0;
 
     r.BeginDrawing();
 
     r.ClearBackground(r.BLACK);
 
-    r.DrawRectangle(practicalX1, detectorY, practicalWidth1, windowHeight, r.BLUE);
-    r.DrawRectangle(practicalX2, detectorY, practicalWidth2, windowHeight, r.BLUE);
+    r.DrawRectangle(0, particalY, windowWidth, particalHeight, r.BLUE);
+    r.DrawRectangle(partical1_X, 0, partical1_width, windowHeight, r.BLUE);
+    r.DrawRectangle(partical2_X, 0, partical2_Width, windowHeight, r.BLUE);
 
-    r.DrawRectangle(detectorX1, detectorY, detectorWidth1, windowHeight, detectorColour1);
-    r.DrawRectangle(detectorX2, detectorY, detectorWidth2, windowHeight, detectorColour2);
+    r.DrawRectangle(detector1_X, 0, detector1_Width, windowHeight, detectorColour1);
+    r.DrawRectangle(detector2_X, 0, detector2_Width, windowHeight, detectorColour2);
+    r.DrawRectangle(0, detectorY, windowWidth, detectorHeight, detectorColourY);
 
     r.EndDrawing();
 }
