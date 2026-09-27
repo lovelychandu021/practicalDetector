@@ -8,8 +8,13 @@ function increment(detectorX, detectorSpeed) {
     return detectorX + detectorSpeed;
 }
 
+function overlap(detectorX, detectorWidth, particalX, particalWeidth) {
+    return detectorX < particalX + particalWeidth && detectorX + detectorWidth > particalX;
+}
+
 module.exports = {
     calcOffset,
     condition,
     increment,
+    overlap,
 };

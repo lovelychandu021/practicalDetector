@@ -8,8 +8,10 @@ let detectorX = 0;
 const detectorWidth = 50;
 let detectorSpeed = 10;
 
-const particalX = 350;
-const particalWeidth = 150;
+const particalX = 400;
+const particalWeidth = 100;
+
+let detectorColour = r.WHITE;
 
 function running() {
     return !r.WindowShouldClose();
@@ -28,6 +30,8 @@ function update() {
     if (edgeTouch) {
         detectorSpeed = -detectorSpeed;
     }
+    const isOverLapping = verfication.overlap(detectorX, detectorWidth, particalX, particalWeidth);
+    detectorColour = isOverLapping ? r.RED : r.WHITE;
 }
 
 function draw() {
@@ -38,7 +42,7 @@ function draw() {
     r.ClearBackground(r.BLACK);
 
     r.DrawRectangle(particalX, detectorY, particalWeidth, windowHeight, r.BLUE);
-    r.DrawRectangle(detectorX, detectorY, detectorWidth, windowHeight, r.WHITE);
+    r.DrawRectangle(detectorX, detectorY, detectorWidth, windowHeight, detectorColour);
 
     r.EndDrawing();
 }
