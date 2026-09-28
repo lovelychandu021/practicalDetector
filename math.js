@@ -1,18 +1,25 @@
-function condition(detectorX, detectorWidth, windowWidth) {
-    return detectorX <= 0 || detectorX + detectorWidth >= windowWidth
-}
-function conditionBetween(detectorX, detectorWidth, start, end) {
-    return detectorX <= start || detectorX + detectorWidth >= end;
-}
-function increment(detectorX, Speed) {
+const r = require("raylib");
+
+function changeDetectorPosition(detectorX, Speed) {
     return detectorX + Speed;
 }
-function overlap(detectorX, detectorWidth, particaldetectorX, particalWidth) {
-    return detectorX < particaldetectorX + particalWidth && detectorX + detectorWidth > particaldetectorX;
+
+function isoverlapping(detectorX, detectorWidth, particalX, particalWidth) {
+    return detectorX < particalX + particalWidth && detectorX + detectorWidth > particalX;
 }
+
+function isOutOfBounds(X, Width, Start, End, Speed) {
+    return (X <= Start|| X+ Width >= End) ? -Speed : Speed;
+}
+
+function isColoureDetected(X, Width, particalX, particalWidth) {
+    ColourChange = isoverlapping(X, Width, particalX, particalWidth);
+    return ColourChange ? r.RED : r.WHITE;
+}
+
 module.exports = {
-    condition,
-    conditionBetween,
-    increment,
-    overlap,
-};
+    changeDetectorPosition,
+    isoverlapping,
+    isOutOfBounds,
+    isColoureDetected,
+}; 

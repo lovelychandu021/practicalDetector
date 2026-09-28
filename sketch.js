@@ -1,33 +1,9 @@
 const r = require("raylib");
-const calculation = require("./math");
-
-const windowWidth = 1000;
-const windowHeight = 700;
-
-let detector1_X = 0;
-const detector1_Width = 50;
-let detector1_Speed = 3;
-
-let detector2_X = 500;
-const detector2_Width = 50;
-let detector2_Speed = 5;
-
-let detectorY = 0;
-const detectorHeight = 50;
-let detectorSpeedY = 4;
-
-const partical1_X = 400;
-const partical1_width = 100;
-
-const partical2_X = 700;
-const partical2_Width = 10;
-
-const particalY = 300;
-const particalHeight = 30;
-
-let detectorColour1 = r.WHITE;
-let detectorColour2 = r.WHITE;
-let detectorColourY = r.WHITE;
+const m = require("./math");
+const hd1 = require("./horizontalDetector1");
+const hd2 = require("./horizontalDetector2");
+const vd = require("./verticalDetector");
+const w = require("./window");
 
 function running() {
     return !r.WindowShouldClose();
@@ -35,33 +11,49 @@ function running() {
 
 function setup() {
     const FPS = 60;
-    r.InitWindow(windowWidth, windowHeight, "detector");
+    r.SetTraceLogLevel(r.LOG_NONE);
+    r.InitWindow(w.width, w.height, "detector");
     r.SetTargetFPS(FPS);
 }
 
+function updatesDetector1() {
+    hd1.X = m.changeDetectorPosition(hd1.X, hd1.Speed);
+    hd1.Speed = m.isOutOfBounds(hd1.X, hd1.Width, hd1.start, hd1.end, hd1.Speed);
+    hd1.Colour = m.isColoureDetected(hd1.X, hd1.Width, hd1.particalX, hd1.particalWidth);
+}
+
+function updaesDetector2() {
+    hd2.X = m.changeDetectorPosition(hd2.X, hd2.Speed);
+    hd2.Speed = m.isOutOfBounds(hd2.X, hd2.Width, hd2.start, hd2.end, hd2.Speed);
+    hd2.Colour = m.isColoureDetected(hd2.X, hd2.Width, hd2.particalX, hd2.particalWidth);
+}
+
+function updatesDetector3() {
+    vd.Y = m.changeDetectorPosition(vd.Y, vd.Speed);
+    vd.Speed = m.isOutOfBounds(vd.Y, vd.Height, vd.start, vd.end, vd.Speed);
+    vd.Colour = m.isColoureDetected(vd.Y, vd.Height, vd.particalY, vd.particalHeight);
+}
+
+ function drawdetector() {
+        r.DrawRectangle(0, vd.Y, w.width, vd.Height, vd.Colour);
+        r.DrawRectangle(hd1.X, 0, hd1.Width, w.height, hd1.Colour);
+        r.DrawRectangle(hd2.X, 0, hd2.Width, w.height, hd2.Colour);
+ }
+
+ function drawPartical() {
+        r.DrawRectangle(0, vd.particalY, w.width, vd.particalHeight, r.BLUE);
+        r.DrawRectangle(hd1.particalX, 0, hd1.particalWidth, w.height, r.BLUE);
+        r.DrawRectangle(hd2.particalX, 0, hd2.particalWidth, w.height, r.BLUE);
+ }
+
 function update() {
-    detector1_X = calculation.increment(detector1_X, detector1_Speed);
-    detector2_X = calculation.increment(detector2_X, detector2_Speed);
-    detectorY = calculation.increment(detectorY, detectorSpeedY);
+    
+    updatesDetector1();
 
-    if (calculation.conditionBetween(detector1_X, detector1_Width, 0, windowWidth / 2)) {
-        detector1_Speed = -detector1_Speed;
-    }
-    if (calculation.conditionBetween(detector2_X, detector2_Width, windowWidth / 2, windowWidth)) {
-        detector2_Speed = -detector2_Speed;
+    updaesDetector2();
 
-    }
-    if (calculation.conditionBetween(detectorY, detectorHeight, 0, windowHeight)) {
-        detectorSpeedY = -detectorSpeedY;
-    }
+    updatesDetector3();
 
-    const overlapping1 = calculation.overlap(detector1_X, detector1_Width, partical1_X, partical1_width) || calculation.overlap(detector1_X, detector1_Width, partical2_X, partical2_Width);;
-    const overlapping2 = calculation.overlap(detector2_X, detector2_Width, partical1_X, partical1_width) || calculation.overlap(detector2_X, detector2_Width, partical2_X, partical2_Width);;
-    const overlappingY = calculation.overlap(detectorY, detectorHeight, particalY, particalHeight);;
-
-    detectorColour1 = overlapping1 ? r.RED : r.WHITE;
-    detectorColour2 = overlapping2 ? r.RED : r.WHITE;
-    detectorColourY = overlappingY ? r.RED : r.WHITE;
 }
 
 function draw() {
@@ -70,13 +62,9 @@ function draw() {
 
     r.ClearBackground(r.BLACK);
 
-    r.DrawRectangle(0, particalY, windowWidth, particalHeight, r.BLUE);
-    r.DrawRectangle(partical1_X, 0, partical1_width, windowHeight, r.BLUE);
-    r.DrawRectangle(partical2_X, 0, partical2_Width, windowHeight, r.BLUE);
+    drawPartical();
 
-    r.DrawRectangle(detector1_X, 0, detector1_Width, windowHeight, detectorColour1);
-    r.DrawRectangle(detector2_X, 0, detector2_Width, windowHeight, detectorColour2);
-    r.DrawRectangle(0, detectorY, windowWidth, detectorHeight, detectorColourY);
+    drawdetector();
 
     r.EndDrawing();
 }
