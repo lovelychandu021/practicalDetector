@@ -1,6 +1,6 @@
 
 const width = 900;
-const height = 1700;
+const height = 700;
 
 
 module.exports ={
